@@ -1,8 +1,11 @@
 package br.com.yaman.yamanbanking.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +17,20 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import br.com.yaman.yamanbanking.R;
 
 import br.com.yaman.yamanbanking.MainActivity;
 import br.com.yaman.yamanbanking.MenuActivity;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class HomeFragment extends Fragment {
 
@@ -28,18 +41,18 @@ public class HomeFragment extends Fragment {
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
 
+    private String saldo;
+    private boolean error;
+
+    private TextView saldoPoupanca;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-//        final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+
+        saldoPoupanca = root.findViewById(R.id.id_saldo_conta_poupanca);
 
         fab1 = root.findViewById(R.id.botao_flutuante2);
         fab2 = root.findViewById(R.id.botao_flutuante3);
@@ -70,10 +83,64 @@ public class HomeFragment extends Fragment {
 
         m_SaldoAtualizado.setText(saldoAtualizado[0] + saldoAtualizado[1] + saldoAtualizado[2]);
         m_UltimaTransferencia.setText(ultimaTransferencia[0] + ultimaTransferencia[1] + ultimaTransferencia[2] + ultimaTransferencia[3]);
+
+        carregarSaldo();
+
         return root;
     }
 
-    public void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    private void carregarSaldo() {
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Integer, Void, Void>
+                task = new AsyncTask<Integer, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                Log.i("onPreExecute", "Assincrono");
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Void doInBackground(Integer... integers) {
+                Log.i("LOG ENVIO", "GET DADOS ROTAS");
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://172.16.34.225:8080/operacao/buscar-saldo-poupanca?agencia=1234&numeroConta=123456")
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.code() == 200) {
+                        error = false;
+                        JSONObject I = new JSONObject(response.body().string());
+                        saldo = I.getString("valorContaPoupanca");
+
+                        ResponseBody responseBody = response.body();
+                        responseBody.close();
+                    }
+                    else {
+                        error = true;
+                        Log.i("Rotas", "nao deu 200");
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                if (!error) {
+                    saldoPoupanca.setText("R$ " + saldo);
+                } else {
+                    Log.i("teste", "Sem conexão");
+                }
+            }
+        };
+        task.execute();
     }
 }
