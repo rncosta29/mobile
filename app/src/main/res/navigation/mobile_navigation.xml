@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.yaman_bank.ui.home.HomeFragment"
+        android:name="br.com.yaman.yamanbanking.ui.home.HomeFragment"
         android:label="@string/yamanBanking"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_transferencia"
-        android:name="com.example.yaman_bank.ui.transferencia.TransferenciaFragment"
+        android:name="br.com.yaman.yamanbanking.ui.transferencia.TransferenciaFragment"
         android:label="@string/yamanBanking"
         tools:layout="@layout/fragment_transferencia" />
 
     <fragment
         android:id="@+id/nav_sair"
-        android:name="com.example.yaman_bank.ui.sair.SairFragment"
+        android:name="br.com.yaman.yamanbanking.ui.sair.SairFragment"
         android:label="@string/yamanBanking"
         tools:layout="@layout/fragment_sair" />
 
     <fragment
         android:id="@+id/nav_perfil"
-        android:name="com.example.yaman_bank.ui.perfil.PerfilFragment"
+        android:name="br.com.yaman.yamanbanking.ui.perfil.PerfilFragment"
         android:label="@string/yamanBanking"
         tools:layout="@layout/fragment_perfil" />
 
     <fragment
         android:id="@+id/nav_extrato"
-        android:name="com.example.yaman_bank.ui.extrato.ExtratoFragment"
+        android:name="br.com.yaman.yamanbanking.ui.extrato.ExtratoFragment"
         android:label="@string/yamanBanking"
         tools:layout="@layout/fragment_extrato" />
 </navigation>
