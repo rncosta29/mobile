@@ -1,7 +1,9 @@
 package br.com.yaman.yamanbanking.ui.home;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,9 +25,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import br.com.yaman.yamanbanking.R;
-
 import br.com.yaman.yamanbanking.MainActivity;
 import br.com.yaman.yamanbanking.MenuActivity;
+
+import br.com.yaman.yamanbanking.ui.transferencia.TransferenciaFragment;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,10 +43,13 @@ public class HomeFragment extends Fragment {
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
 
-    private String saldo;
+    private SharedPreferences preferencias;
+
+    private String agencia, conta, url;
+    private Double saldoContaCorrente, saldoContaPoupanca;
     private boolean error;
 
-    private TextView saldoPoupanca;
+    private TextView saldoPoupanca, saldoCorrente;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class HomeFragment extends Fragment {
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
+        saldoCorrente = root.findViewById(R.id.id_conta_corrente);
         saldoPoupanca = root.findViewById(R.id.id_saldo_conta_poupanca);
 
         fab1 = root.findViewById(R.id.botao_flutuante2);
@@ -84,9 +90,19 @@ public class HomeFragment extends Fragment {
         m_SaldoAtualizado.setText(saldoAtualizado[0] + saldoAtualizado[1] + saldoAtualizado[2]);
         m_UltimaTransferencia.setText(ultimaTransferencia[0] + ultimaTransferencia[1] + ultimaTransferencia[2] + ultimaTransferencia[3]);
 
-        carregarSaldo();
+        Bundle dados = getActivity().getIntent().getExtras();
+        agencia = dados.getString("agencia");
+        conta = dados.getString("conta");
+
+        url = "http://api-yaman-banking.herokuapp.com/operacao/buscar-saldo?agencia=" + agencia + "&numeroConta=" + conta;
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        carregarSaldo();
     }
 
     private void carregarSaldo() {
@@ -96,7 +112,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             protected void onPreExecute() {
-                Log.i("onPreExecute", "Assincrono");
+                Log.i("transferencia", agencia);
                 super.onPreExecute();
             }
 
@@ -105,14 +121,15 @@ public class HomeFragment extends Fragment {
                 Log.i("LOG ENVIO", "GET DADOS ROTAS");
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("http://172.16.34.225:8080/operacao/buscar-saldo-poupanca?agencia=1234&numeroConta=123456")
+                        .url(url)
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
                     if (response.code() == 200) {
                         error = false;
                         JSONObject I = new JSONObject(response.body().string());
-                        saldo = I.getString("valorContaPoupanca");
+                        saldoContaCorrente = I.getDouble("valorContaCorrente");
+                        saldoContaPoupanca = I.getDouble("valorContaPoupanca");
 
                         ResponseBody responseBody = response.body();
                         responseBody.close();
@@ -135,7 +152,12 @@ public class HomeFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (!error) {
-                    saldoPoupanca.setText("R$ " + saldo);
+                    saldoCorrente.setText(String.format("R$ %.2f", saldoContaCorrente));
+                    saldoPoupanca.setText(String.format("R$ %.2f", saldoContaPoupanca));
+                    preferencias = getActivity().getSharedPreferences("preferencias", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor ed = preferencias.edit();
+                    ed.putString("saldo", String.format("R$ %.2f", saldoContaCorrente));
+                    ed.apply();
                 } else {
                     Log.i("teste", "Sem conexão");
                 }

@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_login_img_logo">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/id_agencia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -89,6 +90,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_login_til_agencia">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/id_conta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -108,11 +110,11 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_login_til_conta">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/id_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:hint="@string/senha"
-            android:inputType="number"
             android:paddingLeft="10dp" />
     </com.google.android.material.textfield.TextInputLayout>
 

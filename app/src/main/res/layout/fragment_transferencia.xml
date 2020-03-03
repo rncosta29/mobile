@@ -72,7 +72,7 @@
         app:layout_constraintTop_toTopOf="@+id/fragment_transferencia_painel_formulario" />
 
     <TextView
-        android:id="@+id/fragment_transferencia_text_valor"
+        android:id="@+id/id_meu_saldo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
