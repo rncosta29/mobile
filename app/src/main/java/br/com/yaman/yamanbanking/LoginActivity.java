@@ -100,6 +100,9 @@ public class LoginActivity extends AppCompatActivity {
                         error = false;
                         JSONObject jsonBody = new JSONObject(response.body().string());
                         login = jsonBody.getBoolean("logou");
+
+                        ResponseBody responseBody = response.body();
+                        responseBody.close();
                     }
                     else {
                         Log.e("REQUEST", "" + response.code() );
