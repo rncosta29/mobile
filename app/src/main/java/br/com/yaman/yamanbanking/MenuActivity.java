@@ -1,5 +1,6 @@
 package br.com.yaman.yamanbanking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -12,6 +13,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+
+import br.com.yaman.yamanbanking.ui.home.HomeFragment;
 
 public class MenuActivity extends AppCompatActivity {
 

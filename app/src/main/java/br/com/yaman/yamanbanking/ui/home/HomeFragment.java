@@ -28,7 +28,6 @@ import br.com.yaman.yamanbanking.R;
 import br.com.yaman.yamanbanking.MainActivity;
 import br.com.yaman.yamanbanking.MenuActivity;
 
-import br.com.yaman.yamanbanking.ui.transferencia.TransferenciaFragment;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -49,6 +48,8 @@ public class HomeFragment extends Fragment {
     private Double saldoContaCorrente, saldoContaPoupanca;
     private boolean error;
 
+    private SharedPreferences preferences;
+
     private TextView saldoPoupanca, saldoCorrente;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -66,16 +67,16 @@ public class HomeFragment extends Fragment {
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), MenuActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getContext(), MenuActivity.class);
+//                startActivity(intent);
             }
         });
 
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getContext(), MainActivity.class);
+//                startActivity(intent);
             }
         });
 
@@ -87,12 +88,14 @@ public class HomeFragment extends Fragment {
         m_UltimaTransferencia = root.findViewById(R.id.textUltimaTransferencia);
 
 
+
         m_SaldoAtualizado.setText(saldoAtualizado[0] + saldoAtualizado[1] + saldoAtualizado[2]);
         m_UltimaTransferencia.setText(ultimaTransferencia[0] + ultimaTransferencia[1] + ultimaTransferencia[2] + ultimaTransferencia[3]);
 
-        Bundle dados = getActivity().getIntent().getExtras();
-        agencia = dados.getString("agencia");
-        conta = dados.getString("conta");
+        preferences = getActivity().getSharedPreferences("dados", Context.MODE_PRIVATE);
+
+        agencia = preferences.getString("agencia", "0");
+        conta = preferences.getString("conta", "0");
 
         url = "http://api-yaman-banking.herokuapp.com/operacao/buscar-saldo?agencia=" + agencia + "&numeroConta=" + conta;
 
