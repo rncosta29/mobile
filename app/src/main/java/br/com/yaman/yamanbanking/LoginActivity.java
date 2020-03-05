@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import br.com.yaman.yamanbanking.ui.MenuActivity;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -32,20 +35,23 @@ public class LoginActivity extends AppCompatActivity {
     private Button botao;
     private EditText agencia, conta, senha;
     private String url;
-    private String agenciaLogin, contaLogin, senhaLogin;
-    private String valorAgencia, valorConta, valorSenha;
     private String iSenha;
     private Integer iAgencia, iConta;
     private boolean error, login;
+    private ConnectivityManager connectivityManager;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        connectivityManager = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
         agencia = findViewById(R.id.id_agencia);
         conta = findViewById(R.id.id_conta);
         senha = findViewById(R.id.id_senha);
+        progressBar = findViewById(R.id.progressBar);
 
         url = "https://api-yaman-banking.herokuapp.com/operacao/login";
 
@@ -63,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (agencia.getText().toString().isEmpty() || conta.getText().toString().isEmpty() || senha.getText().toString().isEmpty())  {
             showToast();
+            return;
         } else {
             iAgencia = Integer.parseInt(agencia.getText().toString());
             iConta = Integer.parseInt(conta.getText().toString());
@@ -75,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                exibirProgress(true);
             }
 
             @Override
@@ -123,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                exibirProgress(false);
                 if (!error) {
                     Log.i("ok", "Ok");
                     if (login == true) {
@@ -136,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
                         startActivity(intent);
+                        finish();
                     } else {
                         showToast();
                     }
@@ -153,5 +163,17 @@ public class LoginActivity extends AppCompatActivity {
         int duracao = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(contexto, texto, duracao);
         toast.show();
+    }
+
+    public void exibirProgress(boolean exibir) {
+        if (connectivityManager.getActiveNetworkInfo() != null
+                && connectivityManager.getActiveNetworkInfo().isAvailable()
+                && connectivityManager.getActiveNetworkInfo().isConnected()) {
+            progressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        } else {
+            Toast.makeText(LoginActivity.this,
+                    "Verifique sua conexão com a rede", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

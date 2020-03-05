@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.yaman.yamanbanking">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,8 +14,8 @@
         android:theme="@style/AppTheme">
         <activity android:name="br.com.yaman.yamanbanking.MainActivity" />
         <activity android:name="br.com.yaman.yamanbanking.LoginActivity" />
-        <activity android:name="br.com.yaman.yamanbanking.MenuActivity" />
-        <activity android:name="br.com.yaman.yamanbanking.TabActivity" />
+        <activity android:name="br.com.yaman.yamanbanking.ui.MenuActivity" />
+        <activity android:name="br.com.yaman.yamanbanking.ui.main.TabActivity" />
         <activity android:name="br.com.yaman.yamanbanking.TelaDeAcessoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

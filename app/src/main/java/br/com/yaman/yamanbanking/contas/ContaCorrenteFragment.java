@@ -1,4 +1,4 @@
-package br.com.yaman.yamanbanking;
+package br.com.yaman.yamanbanking.contas;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ContaPoupancaFragment extends Fragment {
+import br.com.yaman.yamanbanking.R;
+import br.com.yaman.yamanbanking.ui.extrato.AdapterContaCorrente;
+
+public class ContaCorrenteFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private String s1[], s2[], s3[];
 
-    public ContaPoupancaFragment() {
+    public ContaCorrenteFragment() {
 
     }
 
@@ -24,7 +27,7 @@ public class ContaPoupancaFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_conta_poupanca, container, false);
+        View view = inflater.inflate(R.layout.fragment_conta_corrente, container, false);
 
         recyclerView = view.findViewById(R.id.reciclador);
 
@@ -32,9 +35,9 @@ public class ContaPoupancaFragment extends Fragment {
         s2 = getResources().getStringArray(R.array.estabelecimento);
         s3 = getResources().getStringArray(R.array.preco);
 
-        MyAdapter2 myAdapter2 = new MyAdapter2(getContext(), s1, s2, s3);
+        AdapterContaCorrente adapterContaCorrente = new AdapterContaCorrente(getContext(), s1, s2, s3);
 
-        recyclerView.setAdapter(myAdapter2);
+        recyclerView.setAdapter(adapterContaCorrente);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;

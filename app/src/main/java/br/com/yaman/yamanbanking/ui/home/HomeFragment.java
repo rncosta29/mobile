@@ -2,16 +2,18 @@ package br.com.yaman.yamanbanking.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,8 +27,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import br.com.yaman.yamanbanking.R;
-import br.com.yaman.yamanbanking.MainActivity;
-import br.com.yaman.yamanbanking.MenuActivity;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -39,8 +39,12 @@ public class HomeFragment extends Fragment {
     private TextView m_SaldoAtualizado;
     private TextView m_UltimaTransferencia;
 
+    private ProgressBar progressBar;
+
     private FloatingActionButton fab1;
     private FloatingActionButton fab2;
+
+    private ConnectivityManager connectivityManager;
 
     private SharedPreferences preferencias;
 
@@ -57,12 +61,17 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        connectivityManager = (ConnectivityManager) getActivity().getSystemService(
+                Context.CONNECTIVITY_SERVICE
+        );
 
         saldoCorrente = root.findViewById(R.id.id_conta_corrente);
         saldoPoupanca = root.findViewById(R.id.id_saldo_conta_poupanca);
 
         fab1 = root.findViewById(R.id.botao_flutuante2);
         fab2 = root.findViewById(R.id.botao_flutuante3);
+
+        progressBar = root.findViewById(R.id.progressBar);
 
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +126,7 @@ public class HomeFragment extends Fragment {
             protected void onPreExecute() {
                 Log.i("transferencia", agencia);
                 super.onPreExecute();
+                exibirProgress(true);
             }
 
             @Override
@@ -141,20 +151,31 @@ public class HomeFragment extends Fragment {
                         error = true;
                         Log.i("Rotas", "nao deu 200");
                     }
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     System.out.println(e);
                 }
-
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                exibirProgress(false);
                 if (!error) {
+                    Resources res = getResources();
+                   if (saldoContaCorrente > 0){
+                       saldoCorrente.setTextColor(res.getColor(R.color.saldoPositivo));
+                   }else{
+                       saldoCorrente.setTextColor(res.getColor(R.color.vermelho));
+                   }
+
+                    if (saldoContaPoupanca > 0){
+                        saldoPoupanca.setTextColor(res.getColor(R.color.saldoPositivo));
+                    }else{
+                        saldoPoupanca.setTextColor(res.getColor(R.color.vermelho));
+                    }
+
                     saldoCorrente.setText(String.format("R$ %.2f", saldoContaCorrente));
                     saldoPoupanca.setText(String.format("R$ %.2f", saldoContaPoupanca));
                     preferencias = getActivity().getSharedPreferences("preferencias", Context.MODE_PRIVATE);
@@ -167,5 +188,21 @@ public class HomeFragment extends Fragment {
             }
         };
         task.execute();
+    }
+
+//    public void exibirProgress(boolean exibir) {
+//        progressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+//    }
+
+    public void exibirProgress(boolean exibir) {
+        if (connectivityManager.getActiveNetworkInfo() != null
+                && connectivityManager.getActiveNetworkInfo().isAvailable()
+                && connectivityManager.getActiveNetworkInfo().isConnected()) {
+            progressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        } else {
+            Toast.makeText(getActivity(),
+                    "Verifique sua conexão com a rede", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

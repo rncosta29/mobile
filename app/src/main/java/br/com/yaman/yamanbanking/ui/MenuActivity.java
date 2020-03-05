@@ -1,10 +1,12 @@
-package br.com.yaman.yamanbanking;
+package br.com.yaman.yamanbanking.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -14,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
+import br.com.yaman.yamanbanking.R;
 import br.com.yaman.yamanbanking.ui.home.HomeFragment;
 
 public class MenuActivity extends AppCompatActivity {

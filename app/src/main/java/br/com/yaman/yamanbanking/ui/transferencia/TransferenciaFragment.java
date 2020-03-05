@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import java.io.IOException;
 
-import br.com.yaman.yamanbanking.MenuActivity;
+import br.com.yaman.yamanbanking.ui.MenuActivity;
 import br.com.yaman.yamanbanking.R;
 
 import okhttp3.MultipartBody;
@@ -32,6 +34,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class TransferenciaFragment extends Fragment {
 
@@ -44,12 +47,16 @@ public class TransferenciaFragment extends Fragment {
     private boolean error;
     private String idAgencia, idConta, conferirSenha;
     private String oAgencia, oConta, oValor;
+    private ProgressBar progressBar;
+    private ConnectivityManager connectivityManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         transferenciaViewModel =
                 ViewModelProviders.of(this).get(TransferenciaViewModel.class);
         View root = inflater.inflate(R.layout.fragment_transferencia, container, false);
+        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
         botaoConfirmar = root.findViewById(R.id.fragment_transferencia_botao_confirmar);
         meuSaldo = root.findViewById(R.id.id_meu_saldo);
         agencia = root.findViewById(R.id.agenciaTransferencia);
@@ -95,6 +102,7 @@ public class TransferenciaFragment extends Fragment {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                exibirProgress(true);
             }
 
             @Override
@@ -122,6 +130,9 @@ public class TransferenciaFragment extends Fragment {
                     Response response = client.newCall(request).execute();
                     if (response.code() == 200) {
                         error = false;
+
+                        ResponseBody responseBody = response.body();
+                        responseBody.close();
                     }
                     else {
                         Log.e("REQUEST", "" + response.code() );
@@ -138,6 +149,7 @@ public class TransferenciaFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                exibirProgress(false);
                 if (!error) {
                     Log.i("ok", "Ok");
                 } else {
@@ -180,5 +192,17 @@ public class TransferenciaFragment extends Fragment {
                 });
         builder.show();
         return builder.create();
+    }
+
+    public void exibirProgress(boolean exibir) {
+        if (connectivityManager.getActiveNetworkInfo() != null
+                && connectivityManager.getActiveNetworkInfo().isAvailable()
+                && connectivityManager.getActiveNetworkInfo().isConnected()) {
+            progressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        } else {
+            Toast.makeText(getActivity(),
+                    "Verifique sua conexão com a rede", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import br.com.yaman.yamanbanking.R;
 
-import br.com.yaman.yamanbanking.ContaCorrenteFragment;
-import br.com.yaman.yamanbanking.ContaPoupancaFragment;
+import br.com.yaman.yamanbanking.contas.ContaCorrenteFragment;
+import br.com.yaman.yamanbanking.contas.ContaPoupancaFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to

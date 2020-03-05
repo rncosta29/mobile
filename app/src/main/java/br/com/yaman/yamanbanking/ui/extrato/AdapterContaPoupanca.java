@@ -1,4 +1,4 @@
-package br.com.yaman.yamanbanking;
+package br.com.yaman.yamanbanking.ui.extrato;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,12 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
+import br.com.yaman.yamanbanking.R;
+
+public class AdapterContaPoupanca extends RecyclerView.Adapter<AdapterContaPoupanca.MyViewHolder> {
 
     String data1[], data2[], data3[];
     Context context;
 
-    public MyAdapter2(Context ct, String[] s1, String[] s2, String[] s3) {
+    public AdapterContaPoupanca(Context ct, String[] s1, String[] s2, String[] s3) {
 
         context = ct;
         data1 = s1;

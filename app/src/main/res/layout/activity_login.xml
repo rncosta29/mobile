@@ -124,7 +124,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/botao_confirmar_yaman"
-        android:onClick="entrarMenu"
         android:text="@string/entrar_login"
         android:textColor="@color/branco"
         android:textSize="20dp"
@@ -180,4 +179,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="241dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/activity_login_linha_vertical_direita"
+        app:layout_constraintStart_toStartOf="@+id/activity_login_linha_vertical_esquerda"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
