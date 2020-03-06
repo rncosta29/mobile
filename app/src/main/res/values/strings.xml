@@ -18,7 +18,7 @@
     <string name="acesse_sua_conta">Faça login para acessar sua conta</string>
     <string name="agencia">Agencia</string>
     <string name="conta">Conta (com digito)</string>
-    <string name="senha">Senha(4 digito)</string>
+    <string name="senha">Senha(6 digitos)</string>
     <string name="salvar_dados">Salvar Dados</string>
     <string name="acesse_digital">Acesso por digital</string>
     <string name="entrar_login">Entrar</string>

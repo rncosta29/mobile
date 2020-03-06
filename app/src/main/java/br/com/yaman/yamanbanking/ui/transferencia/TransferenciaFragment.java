@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import java.io.IOException;
@@ -63,6 +64,8 @@ public class TransferenciaFragment extends Fragment {
         conta = root.findViewById(R.id.contaTransferencia);
         valor = root.findViewById(R.id.valorTransferencia);
 
+        progressBar = root.findViewById(R.id.progressBar);
+
         url = "https://api-yaman-banking.herokuapp.com/operacao/transferir";
 
         preferences = getActivity().getSharedPreferences("dados", Context.MODE_PRIVATE);
@@ -73,7 +76,7 @@ public class TransferenciaFragment extends Fragment {
         botaoConfirmar.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                confirmarTransferencia();
+                validaLogin();
             }
         });
         return root;
@@ -86,15 +89,18 @@ public class TransferenciaFragment extends Fragment {
         meuSaldo.setText(preferencias.getString("saldo", "nulo"));
     }
 
-    private void transferir() {
-
-        if(agencia.getText().toString() != null && conta.getText().toString() != null && valor.getText().toString() != null) {
+    public void validaLogin() {
+        if(agencia.getText().toString().equals("") || conta.getText().toString().equals("") || valor.getText().toString().equals("")) {
+            showToast();
+        } else {
             oAgencia = agencia.getText().toString();
             oConta = conta.getText().toString();
             oValor = valor.getText().toString();
-        } else {
-            showToast();
+            confirmarTransferencia();
         }
+    }
+
+    private void transferir() {
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Integer, Void, Void>
                 task = new AsyncTask<Integer, Void, Void>() {
@@ -151,8 +157,13 @@ public class TransferenciaFragment extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 exibirProgress(false);
                 if (!error) {
+                    Toast.makeText(getContext(), "Tranferencia concluida", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity().getApplicationContext(), MenuActivity.class);
+                    startActivity(intent);
+                    //toasOk();
                     Log.i("ok", "Ok");
                 } else {
+                    //toastErro();
                     Log.i("falha", "Sem conexão");
                 }
             }
@@ -162,16 +173,15 @@ public class TransferenciaFragment extends Fragment {
 
     public void showToast() {
         Context contexto = getActivity().getApplicationContext();
-        String texto = "Verifique suas informações";
+        String texto = "Preencha todos os campos";
         int duracao = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(contexto, texto, duracao);
         toast.show();
     }
 
-    public Dialog confirmarTransferencia(){
+    public Dialog confirmarTransferencia() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-
 
         final View view =inflater.inflate(R.layout.activity_dialog_senha, null);
         builder.setView(view)
@@ -181,12 +191,14 @@ public class TransferenciaFragment extends Fragment {
                         conferenciaSenha = view.findViewById(R.id.id_conferencia_senha);
                         Log.i("transferencia", conferenciaSenha.getText().toString() );
                         if (conferirSenha.equals(conferenciaSenha.getText().toString())) {
+                            dialog.dismiss();
                             transferir();
-                            Toast.makeText(getContext(), "Tranferencia concluida", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity().getApplicationContext(), MenuActivity.class);
-                            startActivity(intent);
+//                            Toast.makeText(getContext(), "Tranferencia concluida", Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent(getActivity().getApplicationContext(), MenuActivity.class);
+//                            startActivity(intent);
                         } else {
                             Toast.makeText(getContext(), "Senha incorreta", Toast.LENGTH_SHORT).show();
+                            confirmarTransferencia();
                         }
                     }
                 });

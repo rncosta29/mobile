@@ -1,4 +1,4 @@
-package br.com.yaman.yamanbanking.ui.main;
+package br.com.yaman.yamanbanking.ui.extrato;
 
 import android.os.Bundle;
 import android.view.View;

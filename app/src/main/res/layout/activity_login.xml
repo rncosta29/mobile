@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/branco"
-    tools:context=".LoginActivity">
+    tools:context=".MainActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -76,6 +76,8 @@
             android:background="@null"
             android:hint="@string/agencia"
             android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="4"
             android:paddingLeft="10dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,6 +98,8 @@
             android:background="@null"
             android:hint="@string/conta"
             android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="6"
             android:paddingLeft="10dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,6 +119,8 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:hint="@string/senha"
+            android:maxLines="1"
+            android:maxLength="6"
             android:paddingLeft="10dp" />
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -1,12 +1,13 @@
 package br.com.yaman.yamanbanking.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -17,11 +18,14 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 
 import br.com.yaman.yamanbanking.R;
-import br.com.yaman.yamanbanking.ui.home.HomeFragment;
+import br.com.yaman.yamanbanking.TelaDeAcessoActivity;
 
 public class MenuActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private MenuItem navSair;
+    private SharedPreferences preferences;
+    private String idAgencia, idConta, idSenha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,21 @@ public class MenuActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        preferences = getSharedPreferences("dados", Context.MODE_PRIVATE);
+        idAgencia = preferences.getString("agencia", idAgencia);
+        idConta = preferences.getString("conta", idConta);
+        idSenha = preferences.getString("senha","Erro");
+
+        navSair = navigationView.getMenu().findItem(R.id.nav_sair).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                finish();
+                Intent intent = new Intent(getApplicationContext(), TelaDeAcessoActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     @Override

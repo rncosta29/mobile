@@ -29,7 +29,6 @@ public class SairFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
-        getActivity().finish();
 
         return root;
     }
